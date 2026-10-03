@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=2">
+<meta name="theme-color" content="#161b1f"><meta name="description" content="Your own 3D kitchen chaos sandbox. Punch, fling, and blast two ragdoll buddies with real physics. Made for touch.">
+<title>Kitchen Chaos — Let it fly.</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23ff6839'/%3E%3Ccircle cx='30' cy='37' r='18' fill='%23161b1f'/%3E%3Cpath d='M38 20q-3-12 9-11M49 4v8m-4-4h9' fill='none' stroke='%23fff5dc' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main id="game" aria-label="Kitchen Chaos 3D game">
+<canvas id="scene" tabindex="0" aria-label="3D kitchen. Select a tool and tap a character. Hold any body part to drag and throw with any tool. Repeated hits break limbs; Repair restores them. Keyboard: 1 to 8 tools, space punch, B bomb, R repair."></canvas>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">K<span>✳</span></span><div><h1>KITCHEN <b>CHAOS</b></h1><div class="eyebrow">BREAK THE ROUTINE.</div></div></div>
+  <div class="top-actions"><button class="leaderboard-button" id="leaderboard" aria-label="Leaderboard and your score"><span aria-hidden="true">🏆</span><span class="board-button-label">Scores</span></button><button class="icon-button" id="sound" aria-label="Turn sound on" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg></button><button class="icon-button" id="help" aria-label="How to play"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4m0 3h.01"/></svg></button></div>
+</header>
+<section class="session-panel" aria-label="Session score"><div class="micro">TOTAL CHAOS</div><div class="score-line"><span id="score">0000</span><span id="combo" class="combo">LET IT FLY</span></div><div class="meter"><div id="meter-fill"></div></div><div class="meter-caption"><span id="hits">0 hits</span><span id="status">Kitchen is suspiciously tidy</span></div></section>
+<section class="buddy-panel" aria-label="Select your buddy"><div class="micro">PICK YOUR BUDDIES</div><div class="buddy-options"><button data-buddy="man" class="buddy" aria-pressed="false"><span class="avatar">👨🏻‍🦱</span><span>Man</span></button><button data-buddy="woman" class="buddy" aria-pressed="false"><span class="avatar">👩🏻</span><span>Woman</span></button><button data-buddy="both" class="buddy selected" aria-pressed="true"><span class="avatar">👥</span><span>Both</span></button></div><div id="damage-stat" class="damage-stat" aria-live="polite">0 broken · 0 glass shards</div></section>
+<div id="callout" aria-live="polite"></div>
+<div class="scene-label"><span class="scene-line"></span> THE KITCHEN <span class="scene-index">01</span></div>
+<div class="bottom-ui">
+ <div class="utility-row"><button id="stand" class="utility" aria-label="Repair buddies and restore all limbs"><svg viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 3 8M3 4v7h7"/></svg>Repair buddies</button><div class="hint" id="hint">Tap to punch · Hold to drag</div><button id="slow" class="utility" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v5l3 2M9 2h6"/></svg><span>Slow mo</span></button></div>
+ <nav class="tool-tray" aria-label="Choose a tool">
+  <button class="tool" data-tool="grab" aria-pressed="false"><span class="tool-key">1</span><span class="tool-art">✋</span><span>Grab</span></button>
+  <button class="tool active" data-tool="punch" aria-pressed="true"><span class="tool-key">2</span><span class="tool-art">🥊</span><span>Punch</span></button>
+  <button class="tool" data-tool="bomb" aria-pressed="false"><span class="tool-key">3</span><span class="tool-art">💣</span><span>Bomb</span></button>
+  <div class="tool-divider"></div>
+  <button class="tool" data-tool="pan" aria-pressed="false"><span class="tool-key">4</span><span class="tool-art">🍳</span><span>Pan</span></button>
+  <button class="tool" data-tool="bottle" aria-pressed="false"><span class="tool-key">5</span><span class="tool-art">🍾</span><span>Bottle</span></button>
+  <button class="tool" data-tool="rolling" aria-pressed="false"><span class="tool-key">6</span><span class="tool-art">🪵</span><span>Rolling pin</span></button>
+  <button class="tool" data-tool="gelato" aria-pressed="false"><span class="tool-key">7</span><span class="tool-art">🍨</span><span>Gelato</span></button>
+  <button class="tool" data-tool="egg" aria-pressed="false"><span class="tool-key">8</span><span class="tool-art">🥚</span><span>Egg</span></button>
+ </nav>
+ <div class="footer-line"><span>NO DISHES WERE WASHED.</span><button id="reset">Reset kitchen <span>↻</span></button></div>
+</div>
+<div id="loader"><div class="loader-mark">K✳</div><strong>Setting the table.</strong><span>Your kitchen is almost ready.</span><div class="loading-bar"></div></div>
+<div id="error" hidden><h2>This kitchen needs WebGL.</h2><p>Please open the game in an up-to-date Safari or Chrome browser.</p><button onclick="location.reload()">Try again</button></div>
+<dialog id="help-dialog"><button id="close-help" class="close-help" aria-label="Close help">×</button><div class="micro">WELCOME TO YOUR SANDBOX</div><h2>A little less tidy.<br>A lot more fun.</h2><p>Pick a tool, then tap anywhere in the kitchen.</p><dl><dt>✋ Grab</dt><dd>Hold or swipe a buddy or loose object with any tool selected. Keep holding to drag; release to fling.</dd><dt>🥊 Punch</dt><dd>Tap a limb repeatedly to break it off. Keep hitting a loose part to smash it into pieces.</dd><dt>💣 Bomb</dt><dd>Tap to drop a bomb. Watch the fuse, then the shockwave.</dd><dt>🍳 Kitchen tools</dt><dd>Tap to throw cookware. Bottles break on impact and their glass fragments scatter or stick to a buddy.</dd><dt>🍨 Food fight</dt><dd>Throw gelato for a sticky splash, or eggs that crack into shell pieces and yolk.</dd><dt>🏆 Scores</dt><dd>Enter your name in Scores to join the shared leaderboard. Your best score saves as you play.</dd></dl><p class="help-note">Choose Both to play with both buddies together. Repair buddies restores every limb and clears glass, blood and food splatters. Reset kitchen clears the whole room. Try slow motion for a closer look.</p><p class="help-keys">KEYBOARD · 1–8 tools · Space punch · B bomb · R repair</p><button id="play" class="primary">Let's make a mess</button></dialog>
+<dialog id="leaderboard-dialog" aria-labelledby="board-title">
+ <button id="close-board" class="close-help" aria-label="Close leaderboard">×</button>
+ <div class="micro">THE MESS HALL</div><h2 id="board-title">Kitchen legends.</h2>
+ <p id="player-label">Add your name to save your score</p>
+ <div class="score-cards"><div><span>This kitchen</span><strong id="your-score">0</strong></div><div><span>Your best</span><strong id="your-best">—</strong></div><div><span>Your rank</span><strong id="your-rank">—</strong></div></div>
+ <form id="player-form"><label for="player-name">Player name</label><div class="name-entry"><input id="player-name" name="name" maxlength="24" minlength="1" required autocomplete="nickname" placeholder="Your kitchen alias"><button id="save-player" type="submit">Join / update</button></div><p class="board-note">Your name and best score are public. This browser remembers your player.</p></form>
+ <div class="board-actions"><button id="save-score" class="primary" disabled>Save score</button><button id="refresh-board" class="secondary">Refresh</button></div>
+ <p id="board-status" role="status" aria-live="polite">Loading scores…</p>
+ <div class="board-heading"><span>TOP 25 · ALL TIME</span><span>CHAOS POINTS</span></div><ol id="board-list" aria-label="Leaderboard"></ol>
+</dialog>
+</main>
+<script type="module" src="./game.js"></script>
+</body></html>
