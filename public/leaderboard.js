@@ -38,7 +38,7 @@ export function createLeaderboard({getScore,onOpen,onClose}){
   catch(error){message(error.message,true);}finally{button.disabled=false;}
  };
  api('/api/player').then(data=>{player=data.player;if(player)$('#player-name').value=player.name;stats();}).catch(()=>message('Score saving is unavailable. Open the leaderboard to retry.',true));
- const timer=setInterval(()=>{if(player&&pending>player.best)save();},10000);
+ const timer=setInterval(()=>{if(player&&pending>player.best)save();},60000);
  window.addEventListener('pagehide',()=>{clearInterval(timer);if(player&&pending>player.best)fetch('/api/score',{method:'POST',credentials:'same-origin',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({score:pending})}).catch(()=>{});});
  stats();return{scoreChanged(value){pending=Math.max(pending,value);if(dialog.open)stats();},captureScore(){pending=Math.max(pending,getScore());save();}};
 }

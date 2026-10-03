@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kitchen-chaos",
+  "main": "worker/index.js",
+  "account_id": "584717a5616edba9bb2c915d52c691e5",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kitchen-chaos-leaderboard",
+      "database_id": "2122c7e5-3e14-4b2c-babf-74dc9b2d40c8",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}
